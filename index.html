@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>快团团素材生成器</title>
+<style>
+:root{font-family:"Microsoft YaHei","PingFang SC",sans-serif;color:#242936;background:#f3f5f7;--red:#e94354;--line:#e4e7ed}
+*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled,input:disabled,select:disabled{cursor:not-allowed}button:disabled{color:#89919f;background:#f4f5f7}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #f5a7b0;outline-offset:2px}
+.topbar{height:76px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:16px}.identity{display:flex;align-items:center;gap:12px}.mark{background:var(--red);color:white;padding:6px 10px;border-radius:8px;font-weight:900;font-size:24px}h1{font-size:19px;margin:0 0 3px}.tagline{font-size:12px;color:#727c8d;margin:0}.status{font-size:12px;background:#f0f6f2;color:#35684c;padding:7px 10px;border-radius:5px;white-space:nowrap}
+.app{display:grid;grid-template-columns:minmax(340px,460px) minmax(0,1fr);max-width:1600px;margin:auto}.editor{background:white;border-right:1px solid var(--line);padding:22px 28px 28px}.stage-note{font-size:12px;line-height:1.8;color:#687386;background:#f6f7f9;border-left:3px solid #a3acbb;padding:10px 12px;margin:0 0 22px}.section{padding:20px 0;border-top:1px solid var(--line)}.section:first-of-type{border-top:0;padding-top:0}h2{font-size:14px;margin:0 0 16px;display:flex;justify-content:space-between;align-items:center}h2 small{font-size:11px;font-weight:400;color:#929aa7}.templates{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.template{border:1px solid var(--line);border-radius:7px;padding:12px 4px;background:white;font-size:12px}.template.active{border-color:var(--red);color:var(--red);background:#fff4f5}.mini{height:38px;width:28px;margin:0 auto 8px;border:1px solid currentColor;border-top-width:5px;position:relative}.mini:after{content:"";position:absolute;background:currentColor;opacity:.25;left:5px;right:5px;top:4px;height:16px}.mini.left:after{right:12px;left:3px}.mini.big:after{left:2px;right:2px;height:22px}.field{margin-bottom:14px}.field:last-child{margin-bottom:0}label{display:block;font-size:12px;color:#596274;margin-bottom:7px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,textarea,select{width:100%;padding:10px 11px;border:1px solid #dbe0e7;background:white;border-radius:6px;color:#252c38;font-size:13px;min-width:0}textarea{resize:vertical;min-height:82px;line-height:1.6}input:disabled,select:disabled{background:#f6f7f9;color:#8d95a3}.hint{font-size:11px;color:#87909f;line-height:1.7;margin:7px 0 0}.validation{font-size:12px;line-height:1.6;color:#b43b43;margin:8px 0 0;min-height:0}.point{display:flex;align-items:center;gap:8px;margin-bottom:9px}.point span{font-size:11px;color:#919aa7}.secondary{width:100%;border:1px dashed #d5dbe4;border-radius:6px;padding:10px;font-size:12px}.actions{display:grid;grid-template-columns:1fr 1.2fr;gap:10px}.actions button{padding:12px;border:1px solid #dce1e8;border-radius:6px;font-size:13px}
+.preview-area{padding:25px 40px 40px;min-width:0}.preview-toolbar{display:flex;justify-content:space-between;align-items:center;max-width:560px;margin:0 auto 20px;font-size:13px}.preview-toolbar span{font-size:11px;color:#7a8493}.live{display:flex;align-items:center;gap:6px}.live:before{content:"";width:6px;height:6px;border-radius:50%;background:#539b76}.paper{width:min(100%,405px);margin:auto;box-shadow:0 12px 36px #23314912;background:white}canvas{display:block;width:100%;height:auto;aspect-ratio:9/16}.preview-caption{text-align:center;font-size:11px;color:#8993a0;line-height:1.8;margin:16px 0}.future-note{font-size:11px;color:#8b94a2;margin:10px 0 0;text-align:center}
+.point button{flex:0 0 38px;height:38px;border:1px solid var(--line);border-radius:6px;font-size:12px}.teaching{color:#8c5360;background:#fff5f6;border-radius:5px;padding:8px 10px;font-size:12px;line-height:1.7;margin:0 0 14px}.actions{background:white;padding:12px 0 6px;border-top:1px solid var(--line)}
+.point span{flex:0 0 12px;text-align:center}.point button{flex:0 0 34px;height:38px;border:0;border-radius:6px;background:#fff0f2;color:#c23d4c;font-size:20px;line-height:1}.point button:hover{background:#ffe0e4}.secondary:not(:disabled){color:#b33b49;background:#fff8f9;border-color:#e7aab2}
+@media(min-width:901px){body{height:100vh;overflow:hidden}.app{height:calc(100vh - 76px)}.editor{height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}.actions{position:sticky;bottom:-28px;z-index:1;box-shadow:0 -8px 16px #ffffffef}.preview-area{height:100%;overflow:auto}.paper{width:min(100%,405px,calc((100vh - 225px)*.5625))}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.editor{border-right:0;border-bottom:1px solid var(--line)}.preview-area{padding:24px 20px 30px}.topbar{padding:0 20px}.editor{padding:22px 20px}.preview-toolbar{max-width:405px}}
+@media(max-width:380px){.grid{grid-template-columns:1fr}.status{display:none}h1{font-size:17px}.topbar{padding:0 14px}.editor{padding:20px 14px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="identity"><span class="mark" aria-hidden="true">团</span><div><h1>快团团素材生成器</h1><p class="tagline">把商品信息，变成一张开团海报</p></div></div><span class="status">本机处理</span></header>
+<main class="app">
+<form id="editor" class="editor" novalidate>
+<p class="stage-note"><strong>教学示例 · 三种版式实时预览</strong><br>下方文案、价格与海报均为演示内容，可以改写文字查看效果。灰色控件尚未实现。刷新后不保留填写内容。</p>
+<section class="section"><h2>版式模板 <small>三种版式可切换</small></h2><div class="templates">
+<button class="template active" data-template="classic" type="button" aria-pressed="true"><div class="mini" aria-hidden="true"></div>居中促销</button>
+<button class="template" data-template="clean" type="button" aria-pressed="false"><div class="mini left" aria-hidden="true"></div>左图清单</button>
+<button class="template" data-template="boom" type="button" aria-pressed="false"><div class="mini big" aria-hidden="true"></div>大图爆款</button></div></section>
+<section class="section"><h2>基础信息</h2>
+<p class="teaching">填写提示：把示例替换成你的商品信息。顶部标签写活动，品牌写团长名，标题写商品与规格。</p>
+<div class="grid"><div class="field"><label for="topTag">顶部标签</label><input id="topTag" name="topTag" value="今日开团"></div><div class="field"><label for="brandName">团长昵称／品牌</label><input id="brandName" name="brandName" value="小美优选·团长"></div></div>
+<div class="field"><label for="productTitle">商品标题</label><input id="productTitle" name="productTitle" value="【新疆直发】阿克苏冰糖心苹果 5斤装"></div>
+<div class="field"><label for="subtitle">副标题／一句话卖点</label><input id="subtitle" name="subtitle" value="咬一口甜脆爆汁，产地现摘现发"></div>
+</section>
+<section class="section"><h2>图片素材 <small>本机读取</small></h2>
+<p class="hint">分别选择商品主图和已有二维码，支持 PNG、JPG、JPEG。图片仅在当前浏览器内存中处理，刷新后清空。自动识别：竖图用 3:4 框，横图／方图用 1:1 框；保留原图比例使用实际比例。完整展示有留边，铺满裁切会居中裁去边缘，均不拉伸。</p>
+<div class="field"><label for="productImage">商品主图</label><input id="productImage" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" aria-describedby="productImageFeedback"><p id="productImageFeedback" class="hint" role="status" aria-live="polite">未选择图片</p></div>
+<div class="grid"><div class="field"><label for="imageRatio">图片展示比例</label><select id="imageRatio" aria-describedby="imageFitFeedback"><option value="auto">自动识别</option><option value="portrait">3:4</option><option value="square">1:1</option><option value="original">保留原图比例</option></select></div><div class="field"><label for="imageFit">图片适配方式</label><select id="imageFit" aria-describedby="imageFitFeedback"><option value="contain">完整展示</option><option value="cover">铺满裁切</option></select></div></div>
+<p id="imageFitFeedback" class="hint" role="status" aria-live="polite"></p><div class="field"><label for="qrImage">已有二维码</label><input id="qrImage" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" aria-describedby="qrImageFeedback qrNotice"><p id="qrImageFeedback" class="hint" role="status" aria-live="polite">未选择图片</p><p id="qrNotice" class="hint">仅上传已有二维码图片，不生成商品购买码。二维码固定等比完整展示，保留原图全部边缘和原有留白，并加白底边距，不随主图裁切。请使用清晰、留白完整的原图；占位非真实购买入口。需在后续用实际码和最终导出 PNG 检查能否识别。</p></div></section>
+<section class="section"><h2>核心卖点 <small id="pointsCount">3 / 6 条</small></h2>
+<p class="hint">每条写一个购买理由。最终最多 6 条，本轮展示 3 条教学示例。</p>
+<div id="pointsList"></div>
+<button id="addPoint" class="secondary" type="button">＋ 添加一条卖点（最多 6 条）</button></section>
+<section class="section"><h2>价格和转化文案</h2>
+<div class="grid"><div class="field"><label for="originalPrice">原价（元）</label><input id="originalPrice" name="originalPrice" type="number" min="0" max="999999.99" step="0.01" inputmode="decimal" value="39.90" aria-describedby="priceFeedback"></div><div class="field"><label for="salePrice">团购价（元）</label><input id="salePrice" name="salePrice" type="number" min="0" max="999999.99" step="0.01" inputmode="decimal" value="19.90" aria-describedby="priceFeedback"></div></div>
+<p id="priceFeedback" class="validation" role="status" aria-live="polite"></p><p class="hint">金额请输入 0～999999.99，最多两位小数。原价和团购价均填写且原价较高时，优惠按整数元四舍五入显示。</p>
+<div class="field" style="margin-top:16px"><label for="leaderNote">团长说</label><textarea id="leaderNote" name="leaderNote">我自己吃了两箱，真的甜！产地现摘现发，喜欢脆甜口感的可以试试。</textarea></div>
+<div class="field"><label for="shipping">规格／发货信息</label><input id="shipping" name="shipping" value="5斤/箱 · 默认圆通 · 48h内发货 · 坏果包赔"></div>
+<div class="field"><label for="buttonMain">按钮主文案</label><input id="buttonMain" name="buttonMain" value="长按识别 跟团购买"></div>
+<div class="field"><label for="buttonSub">按钮副文案</label><input id="buttonSub" name="buttonSub" value="早买早发 · 手慢无"></div>
+<p id="textFeedback" class="validation" role="status"></p></section>
+<p id="resetNotice" class="hint">恢复示例会替换当前内容并清空两张图片，保留当前版式。</p><div class="actions"><button id="resetDemo" type="button" aria-describedby="resetNotice">恢复示例</button><button id="exportPng" type="button" aria-describedby="exportFeedback">导出 PNG</button></div>
+<p id="resetFeedback" class="hint" role="status" aria-live="polite"></p><p id="exportFeedback" class="hint" role="status" aria-live="polite"></p><p class="future-note">仅导出海报；下载位置由浏览器设置决定。</p>
+</form>
+<section class="preview-area" aria-label="海报实时预览"><div class="preview-toolbar"><strong class="live">实时预览</strong><span>720 × 1280 px · 居中促销</span></div>
+<div class="paper"><canvas id="poster" width="720" height="1280" role="img" aria-label="居中促销海报预览"></canvas></div>
+<p class="preview-caption">教学海报 · 示例文案与价格仅供演示<br>画布固定 720 × 1280 像素，屏幕按比例缩小<br>未选图时显示占位，二维码占位不可扫描；上传后显示当前素材；PNG 导出与海报预览一致</p></section>
+</main>
+<script>
+'use strict';
+function parsePrice(value) {
+  const text = String(value).trim();
+  if (!/^\d{1,6}(\.\d{1,2})?$/.test(text)) return null;
+  const [whole, fraction = ''] = text.split('.');
+  return Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
+}
+function formatMoney(cents) {
+  return (cents / 100).toFixed(2);
+}
+function getPricing(originalText, saleText) {
+  const original = parsePrice(originalText), sale = parsePrice(saleText);
+  const difference = original !== null && sale !== null ? original - sale : null;
+  return { original, sale, saving: difference > 0 ? Math.floor((difference + 50) / 100) : null };
+}
+const form = document.getElementById('editor');
+const canvas = document.getElementById('poster');
+const ctx = canvas.getContext('2d');
+const font = '"Microsoft YaHei","PingFang SC",sans-serif';
+const red = '#e94354';
+let currentTemplate='classic';
+const templateNames={classic:'居中促销',clean:'左图清单',boom:'大图爆款'};
+const warnings = new Set();
+// 当前素材只保存在内存；预览绘制与后续 Canvas 导出共享此状态。
+const imageAssets = { productImage: null, qrImage: null };
+const imageRequests = { productImage: 0, qrImage: 0 };
+const pendingImageLoads = new Set();
+const imageLoadErrors = { productImage: '', qrImage: '' };
+function loadLocalImage(id) {
+  const task=readLocalImage(id);
+  pendingImageLoads.add(task);
+  task.finally(()=>pendingImageLoads.delete(task));
+  return task;
+}
+async function readLocalImage(id) {
+  const input = document.getElementById(id), file = input.files[0];
+  if (!file) return;
+  const request = ++imageRequests[id];
+  const feedback = document.getElementById(id+'Feedback');
+  const report = (message, invalid=false) => {
+    if(request !== imageRequests[id]) return;
+    imageLoadErrors[id]=invalid?message:'';
+    feedback.textContent=message; feedback.className=invalid?'validation':'hint';
+    input.setAttribute('aria-invalid',String(invalid));
+  };
+  report('正在读取图片…');
+  let url;
+  try {
+    if(!/\.(png|jpe?g)$/i.test(file.name) || (file.type && !['image/png','image/jpeg'].includes(file.type))) {
+      report('不支持此文件格式，请选择 PNG 或 JPG/JPEG。原有图片保持不变。',true);return;
+    }
+    const bytes=new Uint8Array(await file.slice(0,8).arrayBuffer());
+    const png=[137,80,78,71,13,10,26,10].every((value,i)=>bytes[i]===value);
+    const jpeg=bytes[0]===255 && bytes[1]===216 && bytes[2]===255;
+    if(!png && !jpeg){report('文件内容不是有效的 PNG/JPG，可能已损坏或只是改了扩展名。请重新选择；原有图片保持不变。',true);return;}
+    url=URL.createObjectURL(file);
+    const image=new Image();
+    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=url;});
+    if(!image.naturalWidth || !image.naturalHeight) throw new Error('empty image');
+    if(request !== imageRequests[id]) return;
+    imageAssets[id]={image,name:file.name,width:image.naturalWidth,height:image.naturalHeight};
+    report('已载入：'+file.name+'（'+image.naturalWidth+' × '+image.naturalHeight+'）');
+    render();
+  } catch {
+    report('图片读取失败：文件可能损坏或浏览器无法解码。请重新保存为 PNG/JPG 后重试；原有图片保持不变。',true);
+  } finally {
+    if(url) URL.revokeObjectURL(url);
+    if(request === imageRequests[id]) input.value='';
+  }
+}
+function drawImageAsset(asset,x,y,width,height,background,fit = 'contain') {
+  box(x,y,width,height,background);
+  const scale=(fit==='cover'?Math.max:Math.min)(width/asset.width,height/asset.height);
+  const w=asset.width*scale,h=asset.height*scale;
+  ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
+  ctx.drawImage(asset.image,x+(width-w)/2,y+(height-h)/2,w,h);
+  ctx.restore();
+}
+function getPosterLayout(count) {
+  if(currentTemplate==='clean')return {imageX:36,imageWidth:350,imageHeight:568,pointsX:428,pointsY:306,pointWidth:256,pointStep:88,pointLines:2,pointSize:22};
+  if(currentTemplate==='boom') {const height=560-count*32;return {imageX:36,imageWidth:648,imageHeight:height,pointsX:80,pointsY:266+height+34,pointWidth:604,pointStep:32,pointLines:1,pointSize:23};}
+  return {imageX:147,imageWidth:426,imageHeight:448-Math.max(0,count-3)*35,pointsX:80,pointsY:750-Math.max(0,count-3)*35,pointWidth:604,pointStep:32,pointLines:1,pointSize:23};
+}
+function getProductImageRect(maxHeight) {
+  const asset=imageAssets.productImage;
+  const mode=document.getElementById('imageRatio').value;
+  const original=asset?asset.width/asset.height:3/4;
+  const ratio=mode==='square'?1:mode==='portrait'?3/4:mode==='original'?original:asset?(original<1?3/4:1):3/4;
+  const layout=getPosterLayout(points.filter(point=>point.trim()).length);
+  const width=Math.min(layout.imageWidth,maxHeight*ratio),height=width/ratio;
+  return {x:layout.imageX+(layout.imageWidth-width)/2,y:266+(maxHeight-height)/2,width,height,ratio};
+}
+const demoPoints = Object.freeze(['产地直发，没有中间商加价','冰糖心占比高，一口爆汁甜','坏果包赔，售后无忧']);
+const points = [...demoPoints];
+function renderPointsEditor() {
+  const list = document.getElementById('pointsList'); list.replaceChildren();
+  points.forEach((point,index)=>{
+    const row=document.createElement('div'); row.className='point';
+    const number=document.createElement('span'); number.textContent=String(index+1);
+    const input=document.createElement('input'); input.type='text'; input.value=point; input.name=`point${index+1}`; input.setAttribute('aria-label',`卖点 ${index+1}`); input.placeholder=`卖点 ${index+1}`;
+    input.addEventListener('input',()=>{points[index]=input.value;render();});
+    const remove=document.createElement('button'); remove.type='button'; remove.textContent='×'; remove.title=`删除卖点 ${index+1}`; remove.setAttribute('aria-label',`删除卖点 ${index+1}`);
+    remove.addEventListener('click',()=>{points.splice(index,1);renderPointsEditor();render();});
+    row.append(number,input,remove); list.append(row);
+  });
+  const add=document.getElementById('addPoint'); const full=points.length>=6;
+  add.disabled=full; add.textContent=full?'已达上限：最多 6 条卖点':'＋ 添加一条卖点（最多 6 条）';
+  document.getElementById('pointsCount').textContent=`${points.length} / 6 条`;
+}
+function textStyle(size, weight = 500, color = '#242936') { ctx.font = `${weight} ${size}px ${font}`; ctx.fillStyle = color; ctx.textAlign = 'left'; }
+function box(x, y, w, h, color, radius = 0) { ctx.beginPath(); ctx.roundRect(x, y, w, h, radius); ctx.fillStyle = color; ctx.fill(); }
+function text(value, x, y, width, size, lines, name, color = '#242936', weight = 500) {
+  value = String(value || '').trim() || `${name || '内容'}待填写`;
+  textStyle(size, weight, color);
+  const chars = Array.from(value); const rows = []; let row = '';
+  for (const char of chars) {
+    if (char === '\n' || (row && ctx.measureText(row + char).width > width)) { rows.push(row); row = char === '\n' ? '' : char; }
+    else row += char;
+  }
+  if (row) rows.push(row);
+  if (rows.length > lines) {
+    warnings.add(name);
+    let last = rows[lines - 1];
+    while (last && ctx.measureText(last + '…').width > width) last = Array.from(last).slice(0,-1).join('');
+    rows[lines - 1] = last + '…';
+  }
+  rows.slice(0,lines).forEach((line, i) => ctx.fillText(line, x, y + i * size * 1.4));
+  return Math.min(rows.length, lines);
+}
+function render() {
+  warnings.clear();
+  const data = Object.fromEntries(new FormData(form));
+  const v = name => (data[name] || '').trim();
+  const visiblePoints=points.map(point=>point.trim()).filter(Boolean);
+  ctx.clearRect(0, 0, 720, 1280); ctx.textBaseline = 'alphabetic';
+  box(0,0,720,1280,'#ffffff'); box(0,0,720,90,currentTemplate==='clean'?'#ffffff':red);
+  if(currentTemplate==='clean')box(0,86,720,4,red);
+  document.querySelector('.preview-toolbar span').textContent='720 × 1280 px · '+templateNames[currentTemplate];
+  text(v('brandName'),36,56,420,25,1,'团长昵称／品牌',currentTemplate==='clean'?'#242936':'#ffffff',700);
+  box(485,22,199,46,currentTemplate==='clean'?red:'#ffffff25',23); text(v('topTag'),505,53,159,23,1,'顶部标签','#ffffff',700);
+  const titleLines = text(v('productTitle'),36,144,648,35,2,'商品标题','#242936',800);
+  text(v('subtitle'),36,144 + titleLines * 49,648,22,1,'副标题','#798394');
+  const layout=getPosterLayout(visiblePoints.length);
+  const imageY=266, imageHeight=layout.imageHeight;
+  const imageBottom=imageY+imageHeight, imageCenter=imageY+imageHeight/2;
+  const imageRect=getProductImageRect(imageHeight);
+  const fit=document.getElementById('imageFit').value;
+  document.getElementById('imageFitFeedback').textContent='当前主图框 '+Math.round(imageRect.width)+' × '+Math.round(imageRect.height)+' 像素；'+(fit==='cover'?'等比铺满，居中裁切超出部分。':'等比完整展示，可能留边。')+' 海报仍为 720 × 1280；二维码不受影响。';
+  if(currentTemplate==='boom') {
+    box(36,imageY,648,imageHeight,'#f3f5f7',16);
+    ctx.strokeStyle='#e4e7ed';ctx.lineWidth=2;ctx.strokeRect(36,imageY,648,imageHeight);
+  }
+  if(imageAssets.productImage) {
+    drawImageAsset(imageAssets.productImage,imageRect.x,imageRect.y,imageRect.width,imageRect.height,'#f3f5f7',fit);
+  } else {
+  box(imageRect.x,imageRect.y,imageRect.width,imageRect.height,'#f3f5f7',16);
+  const centerX=imageRect.x+imageRect.width/2;
+  text('商品图占位',centerX-65,imageCenter,130,23,1,'');
+  if(imageRect.width>200)text('教学示例 · 尚未上传',centerX-95,imageCenter+32,190,17,1,'','#9aa2ae');
+  }
+  visiblePoints.forEach((point,index)=>{
+    const y=layout.pointsY+index*layout.pointStep;
+    const markerX=layout.pointsX-44;
+    box(markerX,y-23,29,29,red,15);text(String(index+1),markerX+8,y-2,22,18,1,'','#ffffff',700);
+    text(point,layout.pointsX,y,layout.pointWidth,layout.pointSize,layout.pointLines,`卖点 ${index+1}`,'#343d4a',600);
+  });
+  const pricing = getPricing(v('originalPrice'),v('salePrice'));
+  let priceError = '';
+  ['originalPrice','salePrice'].forEach(key => {
+    const field = form.elements.namedItem(key);
+    const bad = field.validity.badInput || (v(key) !== '' && parsePrice(v(key)) === null);
+    field.setAttribute('aria-invalid',String(bad));
+    if (bad) priceError = `${key === 'originalPrice' ? '原价' : '团购价'}无效：请输入 0～999999.99 之间的金额，最多两位小数；负数、字母或多于两位小数请修正。`;
+  });
+  document.getElementById('priceFeedback').textContent = priceError;
+  box(36,874,648,91,'#fff0f2',14);
+  const saleText=pricing.sale === null ? '团购价待填写' : `¥${formatMoney(pricing.sale)}`;
+  let saleSize=pricing.sale === null ? 27 : 46; textStyle(saleSize,900,pricing.sale === null ? '#8993a0' : red);
+  while(ctx.measureText(saleText).width > 235 && saleSize > 22) textStyle(--saleSize,900,pricing.sale === null ? '#8993a0' : red);
+  ctx.fillText(saleText,58,935);
+  if(pricing.original !== null){
+    const saleWidth=ctx.measureText(saleText).width;
+    textStyle(21,400,'#8a92a0');const original='¥'+formatMoney(pricing.original);const originalX=58+saleWidth+12;
+    ctx.fillText(original,originalX,933);ctx.strokeStyle='#8a92a0';ctx.beginPath();ctx.moveTo(originalX,925);ctx.lineTo(originalX+ctx.measureText(original).width,925);ctx.stroke();
+  } else {
+    text('原价待填写',Math.min(385,75+ctx.measureText(saleText).width),933,150,16,1,'原价','#8a92a0');
+  }
+  box(486,895,180,47,red,24);
+  text(pricing.saving !== null ? `立省 ¥${pricing.saving}` : '立即跟团',501,925,150,21,1,'优惠金额','#ffffff',700);
+  box(36,985,648,105,'#f4f6f8',13);
+  text('团长说',55,1017,100,21,1,'',red,700);text(v('leaderNote'),55,1047,610,21,2,'团长说','#505b6b');
+  box(36,1110,648,134,'#fafbfc',12);box(52,1126,90,90,'#edf0f4');
+  if(imageAssets.qrImage) {
+    box(52,1126,90,90,'#ffffff');
+    drawImageAsset(imageAssets.qrImage,58,1132,78,78,'#ffffff','contain');
+  } else { text('二维码占位',58,1163,80,14,1,'','#939dac');text('非购买入口',58,1187,80,14,1,'','#939dac'); }
+  text(v('buttonMain'),163,1156,499,27,1,'按钮主文案','#242936',800);
+  text(v('buttonSub'),163,1188,499,21,1,'按钮副文案','#798394');
+  text(v('shipping'),163,1224,499,18,1,'规格／发货信息','#798394');
+  document.getElementById('textFeedback').textContent = warnings.size ? `以下内容超出当前版式可显示范围，请缩短：${[...warnings].join('、')}。预览已用省略号标示。` : '';
+  const labels = {topTag:'顶部标签',brandName:'团长昵称／品牌',productTitle:'商品标题',subtitle:'副标题',leaderNote:'团长说',shipping:'规格／发货信息',buttonMain:'按钮主文案',buttonSub:'按钮副文案'};
+  const label = name => String(v(name) || `${labels[name]}待填写`).replace(/[<>]/g, '');
+  canvas.setAttribute('aria-label',`${templateNames[currentTemplate]}海报：${label('productTitle')}，原价${pricing.original === null ? '未填写' : formatMoney(pricing.original)+'元'}，团购价${pricing.sale === null ? '未填写' : formatMoney(pricing.sale)+'元'}，${pricing.saving === null ? '立即跟团' : '立省'+pricing.saving+'元'}。${label('subtitle')}；${label('topTag')}；${label('brandName')}；${label('leaderNote')}；${label('shipping')}；${label('buttonMain')}；${label('buttonSub')}`);
+}
+let exportVersion=0;
+function resetDemo() {
+  // 旧任务仍可完成资源清理，但不可回填素材或发起旧内容下载。
+  exportVersion++;
+  for(const id of ['productImage','qrImage']) {
+    imageRequests[id]++;
+    imageAssets[id]=null;imageLoadErrors[id]='';
+    const input=document.getElementById(id);input.value='';input.setAttribute('aria-invalid','false');
+    const feedback=document.getElementById(id+'Feedback');feedback.textContent='未选择图片';feedback.className='hint';
+  }
+  pendingImageLoads.clear();
+  form.reset();
+  points.splice(0,points.length,...demoPoints);
+  document.getElementById('exportFeedback').textContent='';
+  const button=document.getElementById('exportPng');button.disabled=false;button.textContent='导出 PNG';
+  renderPointsEditor();render();
+  document.getElementById('resetFeedback').textContent='已恢复示例并清空图片，保留当前版式：'+templateNames[currentTemplate]+'。';
+}
+async function exportPoster() {
+  const button=document.getElementById('exportPng');
+  if(button.disabled) return;
+  const version=++exportVersion;
+  const feedback=document.getElementById('exportFeedback');
+  button.disabled=true;button.textContent='正在准备 PNG…';
+  feedback.className='hint';feedback.textContent='正在等待图片读取和字体就绪，准备导出…';
+  let downloadUrl;
+  try {
+    await document.fonts.ready;
+    while(pendingImageLoads.size) {
+      await Promise.all([...pendingImageLoads]);
+      if(version!==exportVersion)return;
+    }
+    if(version!==exportVersion)return;
+    for(const id of ['productImage','qrImage']) {
+      if(imageLoadErrors[id]) throw new Error((id==='productImage'?'商品主图':'二维码')+'最近选图失败，请重新选择有效 PNG/JPG 后再导出。'+imageLoadErrors[id]);
+    }
+    render();
+    const template=templateNames[currentTemplate];
+    const title=(document.getElementById('productTitle').value.trim()||'未命名商品').replace(/[\x00-\x1f<>:"/\\|?*]/g,'-').slice(0,30);
+    const now=new Date();
+    const stamp=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('')+'-'+[now.getHours(),now.getMinutes(),now.getSeconds()].map(v=>String(v).padStart(2,'0')).join('')+'-'+String(now.getMilliseconds()).padStart(3,'0');
+    const filename='快团团-'+template+'-'+stamp+'-'+title+'.png';
+    // 直接编码当前预览画布：只包含海报，使用同一套 render() 排版。
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(new Error('浏览器 PNG 编码失败，可能内存不足，请关闭其他标签页后重试。')),'image/png'));
+    if(version!==exportVersion)return;
+    downloadUrl=URL.createObjectURL(blob);
+    const link=document.createElement('a');link.href=downloadUrl;link.download=filename;
+    document.body.append(link);link.click();link.remove();
+    feedback.textContent='已触发浏览器下载：'+filename+'（720 × 1280）。请在浏览器下载列表中确认；网页无法确认文件是否成功写入磁盘。';
+    const releasedUrl=downloadUrl;setTimeout(()=>URL.revokeObjectURL(releasedUrl),60000);downloadUrl=null;
+  } catch(error) {
+    if(version!==exportVersion)return;
+    feedback.className='validation';
+    feedback.textContent='导出失败：'+(error.name==='SecurityError'?'画布被浏览器限制读取，请重新选择本机 PNG/JPG 图片后重试。':error.message||'浏览器无法生成下载文件，请重试。');
+  } finally {
+    if(downloadUrl)URL.revokeObjectURL(downloadUrl);
+    if(version===exportVersion){button.disabled=false;button.textContent='导出 PNG';}
+  }
+}
+document.getElementById('resetDemo').addEventListener('click',resetDemo);
+document.getElementById('exportPng').addEventListener('click',exportPoster);
+document.querySelectorAll('.template').forEach(button=>button.addEventListener('click',()=>{
+  currentTemplate=button.dataset.template;
+  document.querySelectorAll('.template').forEach(item=>{const selected=item===button;item.classList.toggle('active',selected);item.setAttribute('aria-pressed',String(selected));});
+  render();
+}));
+['productImage','qrImage'].forEach(id=>document.getElementById(id).addEventListener('change',()=>loadLocalImage(id)));
+['imageRatio','imageFit'].forEach(id=>document.getElementById(id).addEventListener('change',render));
+form.addEventListener('submit',event => event.preventDefault());
+form.addEventListener('input',render);
+document.getElementById('addPoint').addEventListener('click',()=>{if(points.length>=6)return;points.push('');renderPointsEditor();render();});
+renderPointsEditor();
+render();
+</script>
+</body>
+</html>
